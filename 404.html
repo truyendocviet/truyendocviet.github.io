@@ -134,8 +134,6 @@
                 else {
                     throw new Error('Link not found for slug: ' + slug);
                 }
-
-                data = await res.json();
             } else {
                 const txt = (await res.text()).trim();
                 data = { url: txt };
