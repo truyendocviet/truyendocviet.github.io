@@ -93,9 +93,9 @@
             // /doc-truyen/abc.html
             // /doc-truyen/abc
             const path = window.location.pathname;
-            const m = path.match(/^\/doc-truyen\/([^\/?#]+?)(?:\.html)?$/);
+            const m = path.match(/^\/link\/([^\/?#]+?)(?:\.html)?$/);
             console.log('Checking path for redirect:', path, m);
-            
+
             if (!m) return; // không phải doc-truyen => hiển thị trang như index bình thường
 
             const slug = decodeURIComponent(m[1]);
