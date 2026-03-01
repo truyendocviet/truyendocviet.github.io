@@ -122,7 +122,8 @@
 
                     if (dataInfo.found) {
                         data = { url: dataInfo.url };
-                    } else {
+                    }
+                    else {
                         throw new Error('Link not found for slug: ' + slug);
                     }
 
@@ -132,11 +133,11 @@
                     data = { url: txt };
                 }
 
-                // if (!data || !data.url) throw new Error('Missing url');
+                if (!data || !data.url) throw new Error('Missing url');
 
-                // if (statusEl) statusEl.textContent = 'Đang chuyển hướng...';
+                if (statusEl) statusEl.textContent = 'Đang chuyển hướng...';
 
-                // window.location.replace(data.url);
+                window.location.replace(data.url);
             } catch (e) {
                 if (statusEl) {
                     statusEl.textContent = `Không tìm thấy link thật cho "${slug}".`;
