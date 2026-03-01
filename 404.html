@@ -117,11 +117,11 @@
                 let data;
                 if (ct.includes('application/json')) {
 
-                    const dataInfo = await res.json();
-                    console.log('dataInfo:', dataInfo);
+                    const serverDataInfo = await res.json();
+                    console.log('serverDataInfo:', serverDataInfo);
 
-                    if (dataInfo.found) {
-                        data = { url: dataInfo.url };
+                    if (serverDataInfo.found) {
+                        data = { url: serverDataInfo.url };
                     }
                     else {
                         throw new Error('Link not found for slug: ' + slug);
@@ -132,6 +132,8 @@
                     const txt = (await res.text()).trim();
                     data = { url: txt };
                 }
+
+                console.log('data to redirect:', data);
 
                 if (!data || !data.url) throw new Error('Missing url');
 
