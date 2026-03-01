@@ -62,8 +62,13 @@
     <div class="error-page d-flex align-items-center justify-content-center">
         <div class="error-container text-center p-4">
             <h1 class="error-code mb-3">truyendocviet2.org</h1>
-            <h2 class="display-6 error-message mb-5">Tên miền website hiện tại đang sử dụng
-                <strong>truyendocviet2.org</strong></h2>
+            <h2 class="display-6 error-message mb-3">Tên miền website hiện tại đang sử dụng
+                <strong>truyendocviet2.org</strong>
+            </h2>
+
+            <!-- Dòng trạng thái redirect (ẩn mặc định) -->
+            <div id="redirectStatus" class="text-white-50 mb-4" style="display:none;"></div>
+
             <div class="d-flex flex-column flex-md-row justify-content-center gap-3">
                 <a href="https://truyendocviet2.org" class="btn btn-glass px-4 py-2 bg-primary">Truy cập ngay
                     truyendocviet2.org</a>
@@ -76,9 +81,62 @@
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
         crossorigin="anonymous"></script>
+
+    <!-- Redirect logic -->
+    <script>
+        (async function () {
+            // Chỉ xử lý các URL dạng:
+            // /doc-truyen/abc.html
+            // /doc-truyen/abc
+            const path = window.location.pathname;
+            const m = path.match(/^\/doc-truyen\/([^\/?#]+?)(?:\.html)?$/);
+            if (!m) return; // không phải doc-truyen => hiển thị trang như index bình thường
+
+            const slug = decodeURIComponent(m[1]);
+            const statusEl = document.getElementById('redirectStatus');
+            if (statusEl) {
+                statusEl.style.display = 'block';
+                statusEl.textContent = `Đang tìm link thật cho "${slug}"...`;
+            }
+
+            try {
+                // TODO: đổi endpoint này theo API của bạn trên trang chính
+                // Ví dụ mong muốn trả JSON: { "url": "https://truyendocviet2.org/doc-truyen/abc-that.html" }
+                const apiUrl = `https://truyendocviet2.org/api/v1/link?slug=${encodeURIComponent(slug)}`;
+
+                const res = await fetch(apiUrl, { mode: 'cors', cache: 'no-store' });
+                if (!res.ok) throw new Error('API status ' + res.status);
+
+                const ct = (res.headers.get('content-type') || '').toLowerCase();
+                let data;
+                if (ct.includes('application/json')) {
+
+
+                    const bookInfo = await res.json();
+                    console.log('Book info:', bookInfo);
+
+                    data = await res.json();
+                } else {
+                    const txt = (await res.text()).trim();
+                    data = { url: txt };
+                }
+
+                // if (!data || !data.url) throw new Error('Missing url');
+
+                // if (statusEl) statusEl.textContent = 'Đang chuyển hướng...';
+
+                // window.location.replace(data.url);
+            } catch (e) {
+                if (statusEl) {
+                    statusEl.textContent = `Không tìm thấy link thật cho "${slug}".`;
+                }
+            }
+        })();
+    </script>
 </body>
 
 </html>
