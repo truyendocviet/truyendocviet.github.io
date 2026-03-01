@@ -105,47 +105,49 @@
                 statusEl.textContent = `Đang tìm link thật cho "${slug}"...`;
             }
 
-            try {
-                // TODO: đổi endpoint này theo API của bạn trên trang chính
-                // Ví dụ mong muốn trả JSON: { "url": "https://truyendocviet2.org/doc-truyen/abc-that.html" }
-                const apiUrl = `https://truyendocviet2.org/api/v1/link?slug=${encodeURIComponent(slug)}`;
+            // try {
 
-                const res = await fetch(apiUrl, { mode: 'cors', cache: 'no-store' });
-                if (!res.ok) throw new Error('API status ' + res.status);
+            // } catch (e) {
+            //     if (statusEl) {
+            //         statusEl.textContent = `Không tìm thấy link thật cho "${slug}".`;
+            //     }
+            // }
 
-                const ct = (res.headers.get('content-type') || '').toLowerCase();
-                let data;
-                if (ct.includes('application/json')) {
+            // TODO: đổi endpoint này theo API của bạn trên trang chính
+            // Ví dụ mong muốn trả JSON: { "url": "https://truyendocviet2.org/doc-truyen/abc-that.html" }
+            const apiUrl = `https://truyendocviet2.org/api/v1/link?slug=${encodeURIComponent(slug)}`;
 
-                    const serverDataInfo = await res.json();
-                    console.log('serverDataInfo:', serverDataInfo);
-                    console.log('serverDataInfo.url:', serverDataInfo.url);
+            const res = await fetch(apiUrl, { mode: 'cors', cache: 'no-store' });
+            if (!res.ok) throw new Error('API status ' + res.status);
 
-                    if (serverDataInfo && serverDataInfo.url && serverDataInfo.url.length > 0) {
-                        data = { url: serverDataInfo.url };
-                    }
-                    else {
-                        throw new Error('Link not found for slug: ' + slug);
-                    }
+            const ct = (res.headers.get('content-type') || '').toLowerCase();
+            let data;
+            if (ct.includes('application/json')) {
 
-                    data = await res.json();
-                } else {
-                    const txt = (await res.text()).trim();
-                    data = { url: txt };
+                const serverDataInfo = await res.json();
+                console.log('serverDataInfo:', serverDataInfo);
+                console.log('serverDataInfo.url:', serverDataInfo.url);
+
+                if (serverDataInfo && serverDataInfo.url && serverDataInfo.url.length > 0) {
+                    data = { url: serverDataInfo.url };
+                }
+                else {
+                    throw new Error('Link not found for slug: ' + slug);
                 }
 
-                console.log('data to redirect:', data);
-
-                if (!data || !data.url) throw new Error('Missing url');
-
-                if (statusEl) statusEl.textContent = 'Đang chuyển hướng...';
-
-                window.location.replace(data.url);
-            } catch (e) {
-                if (statusEl) {
-                    statusEl.textContent = `Không tìm thấy link thật cho "${slug}".`;
-                }
+                data = await res.json();
+            } else {
+                const txt = (await res.text()).trim();
+                data = { url: txt };
             }
+
+            console.log('data to redirect:', data);
+
+            if (!data || !data.url) throw new Error('Missing url');
+
+            if (statusEl) statusEl.textContent = 'Đang chuyển hướng...';
+
+            window.location.replace(data.url);
         })();
     </script>
 </body>
