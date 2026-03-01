@@ -117,9 +117,14 @@
                 let data;
                 if (ct.includes('application/json')) {
 
+                    const dataInfo = await res.json();
+                    console.log('dataInfo:', dataInfo);
 
-                    const bookInfo = await res.json();
-                    console.log('Book info:', bookInfo);
+                    if (dataInfo.found) {
+                        data = { url: dataInfo.url };
+                    } else {
+                        throw new Error('Link not found for slug: ' + slug);
+                    }
 
                     data = await res.json();
                 } else {
