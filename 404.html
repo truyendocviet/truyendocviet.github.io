@@ -119,8 +119,9 @@
 
                     const serverDataInfo = await res.json();
                     console.log('serverDataInfo:', serverDataInfo);
+                    console.log('serverDataInfo.url:', serverDataInfo.url);
 
-                    if (serverDataInfo.found) {
+                    if (serverDataInfo && serverDataInfo.url && serverDataInfo.url.length > 0) {
                         data = { url: serverDataInfo.url };
                     }
                     else {
